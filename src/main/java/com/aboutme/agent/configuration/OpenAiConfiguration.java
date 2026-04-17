@@ -22,4 +22,22 @@ public class OpenAiConfiguration {
                 .baseUrl(baseUrl)
                 .build();
     }
+    @Bean
+    public OpenAIClient groqAIClient(
+            @Value("${groq.apiKey}") final String apiKey,
+            @Value("${groq.baseUrl:}") final Optional<String> baseUrl) {
+        return OpenAIOkHttpClient.builder()
+                .apiKey(apiKey)
+                .baseUrl(baseUrl)
+                .build();
+    }
+    @Bean
+    public OpenAIClient geminiAIClient(
+            @Value("${gemini.apiKey}") final String apiKey,
+            @Value("${gemini.baseUrl:}") final Optional<String> baseUrl) {
+        return OpenAIOkHttpClient.builder()
+                .apiKey(apiKey)
+                .baseUrl(baseUrl)
+                .build();
+    }
 }

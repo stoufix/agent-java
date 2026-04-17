@@ -7,3 +7,9 @@ springdoc:
 openai:
   apiKey: ${OPENAI_API_KEY:}
   baseUrl: ${OPENAI_BASE_URL:https://api.openai.com/v1}
+gemini:
+  apiKey: ${GEMINI_API_KEY:}
+  baseUrl: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta/openai/}
+groq:
+  apiKey: ${GROQ_API_KEY:}
+  baseUrl: ${GROQ_BASE_URL:https://api.groq.dev/v1}

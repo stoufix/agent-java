@@ -211,6 +211,9 @@ components:
           default: true
         maxTokens:
           type: integer
+        aiProvider:
+          type: string
+          enum: [OPENAI, GEMINI, GROQ]
 
     QuestionResponse:
       type: object

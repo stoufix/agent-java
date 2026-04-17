@@ -19,21 +19,33 @@ import java.util.concurrent.CompletableFuture;
 public class LlmApiController implements LlmApi {
 
     private final OpenAIClient openAIClient;
+    private final OpenAIClient geminiAIClient;
+    private final OpenAIClient groqAIClient;
 
     @Override
     public ResponseEntity<QuestionResponse> askQuestion(QuestionRequest questionRequest) {
-        ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-                .addUserMessage(questionRequest.getQuestion())
-                .model(ChatModel.GPT_5_2)
-                .build();
+        ChatCompletionCreateParams.Builder paramsBuilder = ChatCompletionCreateParams.builder()
+                .addUserMessage(questionRequest.getQuestion());
+
+        // Set model based on provider
+        switch (questionRequest.getAiProvider()) {
+            case GEMINI -> paramsBuilder.model("gemini-2.5-flash");
+            case OPENAI -> paramsBuilder.model(ChatModel.GPT_5_2);
+            case GROQ -> paramsBuilder.model("openai/gpt-oss-120b");
+        }
+
+        ChatCompletionCreateParams params = paramsBuilder.build();
 
         // Use async API to get CompletableFuture<ChatCompletion>
-        CompletableFuture<ChatCompletion> chatCompletionFuture =
-            CompletableFuture.supplyAsync(() ->
-                openAIClient.chat().completions().create(params)
-            );
+        CompletableFuture<ChatCompletion> completionFuture = null;
+        switch (questionRequest.getAiProvider()){
+            case GEMINI -> completionFuture = CompletableFuture.supplyAsync(() -> geminiAIClient.chat().completions().create(params));
+            case OPENAI -> completionFuture = CompletableFuture.supplyAsync(() -> openAIClient.chat().completions().create(params));
+            case GROQ -> completionFuture = CompletableFuture.supplyAsync(() -> groqAIClient.chat().completions().create(params));
+        }
 
-        return chatCompletionFuture.thenApply(chatCompletion -> {
+
+        return completionFuture.thenApply(chatCompletion -> {
             QuestionResponse response = new QuestionResponse();
             response.setAnswer(chatCompletion.choices().getFirst().message().content().orElse(""));
             //TODO: to validate
