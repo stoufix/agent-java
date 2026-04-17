@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: agent
+springdoc:
+  swagger-ui:
+    url: /swagger.yaml

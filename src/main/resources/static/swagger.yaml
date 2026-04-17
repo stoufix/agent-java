@@ -1,0 +1,184 @@
+openapi: 3.0.3
+info:
+  title: CV Generator API
+  description: API to generate a CV in PDF format from personal information
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /cv/generate:
+    post:
+      summary: Generate CV as PDF
+      description: গ্রহণ personal information and returns a generated CV PDF file
+      operationId: generateCv
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CvRequest'
+      responses:
+        '200':
+          description: PDF generated successfully
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid input data
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+
+    CvRequest:
+      type: object
+      required:
+        - personalInfo
+        - education
+        - experience
+        - skills
+      properties:
+
+        personalInfo:
+          $ref: '#/components/schemas/PersonalInfo'
+
+        summary:
+          type: string
+          example: Experienced software engineer with 5+ years in backend development
+
+        education:
+          type: array
+          items:
+            $ref: '#/components/schemas/Education'
+
+        experience:
+          type: array
+          items:
+            $ref: '#/components/schemas/Experience'
+
+        skills:
+          type: array
+          items:
+            type: string
+          example: ["Java", "Spring Boot", "Docker"]
+
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+
+        certifications:
+          type: array
+          items:
+            type: string
+
+        languages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Language'
+
+    PersonalInfo:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          example: "+33 6 12 34 56 78"
+        address:
+          type: string
+        linkedin:
+          type: string
+          format: uri
+        github:
+          type: string
+          format: uri
+
+    Education:
+      type: object
+      required:
+        - institution
+        - degree
+        - startDate
+      properties:
+        institution:
+          type: string
+          example: University of Paris
+        degree:
+          type: string
+          example: Master of Computer Science
+        fieldOfStudy:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        description:
+          type: string
+
+    Experience:
+      type: object
+      required:
+        - company
+        - position
+        - startDate
+      properties:
+        company:
+          type: string
+          example: Tech Corp
+        position:
+          type: string
+          example: Backend Developer
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        responsibilities:
+          type: array
+          items:
+            type: string
+
+    Project:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        technologies:
+          type: array
+          items:
+            type: string
+        link:
+          type: string
+          format: uri
+
+    Language:
+      type: object
+      properties:
+        name:
+          type: string
+          example: English
+        level:
+          type: string
+          example: Fluent
