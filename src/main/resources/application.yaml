@@ -4,3 +4,6 @@ spring:
 springdoc:
   swagger-ui:
     url: /swagger.yaml
+openai:
+  apiKey: ${OPENAI_API_KEY:}
+  baseUrl: ${OPENAI_BASE_URL:https://api.openai.com/v1}

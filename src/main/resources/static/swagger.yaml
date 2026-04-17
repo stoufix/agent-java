@@ -1,17 +1,18 @@
 openapi: 3.0.3
 info:
-  title: CV Generator API
-  description: API to generate a CV in PDF format from personal information
+  title: CV Generator & LLM Processing API
+  description: API to generate CV PDFs and process/validate LLM responses
   version: 1.0.0
 
 servers:
   - url: http://localhost:8080/api
 
 paths:
+
   /cv/generate:
     post:
       summary: Generate CV as PDF
-      description: গ্রহণ personal information and returns a generated CV PDF file
+      description: Takes personal information and returns a generated CV PDF file
       operationId: generateCv
       requestBody:
         required: true
@@ -32,8 +33,35 @@ paths:
         '500':
           description: Internal server error
 
+  /llm/ask:
+    post:
+      summary: Ask a question to the LLM and get validated response
+      description: Processes a question using an LLM and validates the response using other LLMs or tools
+      operationId: askQuestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+      responses:
+        '200':
+          description: Successfully processed and validated response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal server error
+
 components:
   schemas:
+
+    # ========================
+    # CV SCHEMAS
+    # ========================
 
     CvRequest:
       type: object
@@ -43,40 +71,30 @@ components:
         - experience
         - skills
       properties:
-
         personalInfo:
           $ref: '#/components/schemas/PersonalInfo'
-
         summary:
           type: string
-          example: Experienced software engineer with 5+ years in backend development
-
         education:
           type: array
           items:
             $ref: '#/components/schemas/Education'
-
         experience:
           type: array
           items:
             $ref: '#/components/schemas/Experience'
-
         skills:
           type: array
           items:
             type: string
-          example: ["Java", "Spring Boot", "Docker"]
-
         projects:
           type: array
           items:
             $ref: '#/components/schemas/Project'
-
         certifications:
           type: array
           items:
             type: string
-
         languages:
           type: array
           items:
@@ -91,16 +109,13 @@ components:
       properties:
         firstName:
           type: string
-          example: John
         lastName:
           type: string
-          example: Doe
         email:
           type: string
           format: email
         phone:
           type: string
-          example: "+33 6 12 34 56 78"
         address:
           type: string
         linkedin:
@@ -119,10 +134,8 @@ components:
       properties:
         institution:
           type: string
-          example: University of Paris
         degree:
           type: string
-          example: Master of Computer Science
         fieldOfStudy:
           type: string
         startDate:
@@ -143,10 +156,8 @@ components:
       properties:
         company:
           type: string
-          example: Tech Corp
         position:
           type: string
-          example: Backend Developer
         startDate:
           type: string
           format: date
@@ -178,7 +189,69 @@ components:
       properties:
         name:
           type: string
-          example: English
         level:
           type: string
-          example: Fluent
+
+    # ========================
+    # LLM SCHEMAS
+    # ========================
+
+    QuestionRequest:
+      type: object
+      required:
+        - question
+      properties:
+        question:
+          type: string
+          example: "Explain microservices architecture"
+        context:
+          type: string
+        validationRequired:
+          type: boolean
+          default: true
+        maxTokens:
+          type: integer
+
+    QuestionResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+        validated:
+          type: boolean
+        confidenceScore:
+          type: number
+          format: float
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationResult'
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
+
+    ValidationResult:
+      type: object
+      properties:
+        validator:
+          type: string
+        status:
+          type: string
+          enum: [PASSED, FAILED, WARNING]
+        score:
+          type: number
+          format: float
+        feedback:
+          type: string
+
+    ResponseMetadata:
+      type: object
+      properties:
+        model:
+          type: string
+        processingTimeMs:
+          type: integer
+        tokensUsed:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
