@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 
 public class CvPdfService {
 
-    public byte[] generatePdf(CvRequest cv) {
+    public static byte[] generatePdf(CvRequest cv) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             Document document = new Document();
@@ -32,7 +32,7 @@ public class CvPdfService {
         }
     }
 
-    private void addHeader(Document doc, CvRequest cv) {
+    private static void addHeader(Document doc, CvRequest cv) {
         PersonalInfo p = cv.getPersonalInfo();
 
         Font nameFont = new Font(Font.HELVETICA, 18, Font.BOLD);
@@ -51,7 +51,7 @@ public class CvPdfService {
         doc.add(contact);
     }
 
-    private void addSummary(Document doc, CvRequest cv) throws Exception {
+    private static void addSummary(Document doc, CvRequest cv) throws Exception {
         if (cv.getSummary() == null) return;
 
         addSectionTitle(doc, "Profile");
@@ -62,7 +62,7 @@ public class CvPdfService {
         doc.add(summary);
     }
 
-    private void addExperience(Document doc, CvRequest cv) throws Exception {
+    private static void addExperience(Document doc, CvRequest cv) throws Exception {
         if (cv.getExperience() == null) return;
 
         addSectionTitle(doc, "Experience");
@@ -94,7 +94,7 @@ public class CvPdfService {
         }
     }
 
-    private void addEducation(Document doc, CvRequest cv) throws Exception {
+    private static void addEducation(Document doc, CvRequest cv) throws Exception {
         if (cv.getEducation() == null) return;
 
         addSectionTitle(doc, "Education");
@@ -111,7 +111,7 @@ public class CvPdfService {
         doc.add(Chunk.NEWLINE);
     }
 
-    private void addSkills(Document doc, CvRequest cv) throws Exception {
+    private static void addSkills(Document doc, CvRequest cv) throws Exception {
         if (cv.getSkills() == null) return;
 
         addSectionTitle(doc, "Skills");
@@ -120,7 +120,7 @@ public class CvPdfService {
         doc.add(skills);
     }
 
-    private void addSectionTitle(Document doc, String title) throws Exception {
+    private static void addSectionTitle(Document doc, String title) throws Exception {
         Font font = new Font(Font.HELVETICA, 14, Font.BOLD);
 
         Paragraph p = new Paragraph(title, font);
