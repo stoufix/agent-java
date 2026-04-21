@@ -47,11 +47,19 @@ public class LlmApiController implements LlmApi {
 
         return completionFuture.thenApply(chatCompletion -> {
             QuestionResponse response = new QuestionResponse();
-            response.setAnswer(chatCompletion.choices().getFirst().message().content().orElse(""));
-            //TODO: to validate
-            response.setValidated(false);
-            //TODO : compute confidence score
-            response.setConfidenceScore(0.95f);
+            var firstChoice = chatCompletion.choices().getFirst();
+            String answer = firstChoice.message().content().orElse("");
+            response.setAnswer(answer);
+            boolean validated = firstChoice.message().isValid();
+            response.setValidated(validated);
+
+            // Compute a simple confidence score:
+            // - if the message is marked valid, give a high confidence (0.95)
+            // - otherwise a medium confidence (0.5)
+            // This is a conservative fallback when token log-probs are not available.
+            float confidence = validated ? 0.95f : 0.5f;
+            response.setConfidenceScore(confidence);
+
             return ResponseEntity.ok(response);
         }).join();
     }
