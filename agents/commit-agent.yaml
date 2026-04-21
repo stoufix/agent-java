@@ -1,13 +1,13 @@
 version: "2"
 
 models:
-  anthropic_opus:
+  gpt_5.2:
     provider: openai
     model: gpt-5.2
 
 agents:
   root:
-    model: anthropic_opus
+    model: gpt-5.2
     description: Git commit organizer that splits WIP commits into clean, logical commits following Kent Beck's "Tidy First?" principles.
     instruction: |
       **Goal:**
