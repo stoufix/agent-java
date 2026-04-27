@@ -168,6 +168,7 @@
                 </executions>
             </plugin>
         </plugins>
+        <finalName>aboutme-agent</finalName>
     </build>
 
 </project>
